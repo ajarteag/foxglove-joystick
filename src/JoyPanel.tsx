@@ -52,9 +52,9 @@ function JoyPanel({ context }: { context: PanelExtensionContext }): JSX.Element 
     const partialConfig = context.initialState as Partial<Config>;
     partialConfig.subJoyTopic ??= "/joy";
     partialConfig.pubJoyTopic ??= "/joy";
-    partialConfig.publishMode ??= false;
+    partialConfig.publishMode ??= true;  // changed by ajarteag
     partialConfig.publishFrameId ??= "";
-    partialConfig.dataSource ??= "sub-joy-topic";
+    partialConfig.dataSource ??= "gamepad";  // changed by ajarteag
     partialConfig.displayMode ??= "auto";
     partialConfig.debugGamepad ??= false;
     partialConfig.layoutName ??= "steamdeck";
@@ -143,6 +143,7 @@ function JoyPanel({ context }: { context: PanelExtensionContext }): JSX.Element 
     didConnect: useCallback((gp: Gamepad) => {
       // TODO update the gamepad ID list
       console.log("Gamepad " + gp.index + " connected!");
+      setConfig((prevConfig) => ({ ...prevConfig, gamepadId: gp.index }));
     }, []),
 
     didDisconnect: useCallback((gp: Gamepad) => {
@@ -156,7 +157,8 @@ function JoyPanel({ context }: { context: PanelExtensionContext }): JSX.Element 
           return;
         }
 
-        if (config.gamepadId !== gp.index) {
+        // added Number casting by ajarteag to fix xbox controller bug
+        if (config.gamepadId != gp.index) {
           return;
         }
 
